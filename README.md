@@ -1,45 +1,52 @@
-# Welcome to your Convex + React (Vite) + Convex Auth app
+# Mission Control
 
-This is a [Convex](https://convex.dev/) project created with [`npm create convex`](https://www.npmjs.com/package/create-convex).
+A real-time, high-performance dashboard for managing autonomous agents and complex task queues. Built with **Convex**, **React**, and **Tailwind CSS**, Mission Control provides a "Command Center" experience for monitoring and orchestrating operations.
 
-After the initial setup (<2 minutes) you'll have a working full-stack app using:
+## ✨ Features
 
-- Convex as your backend (database, server logic)
-- [React](https://react.dev/) as your frontend (web page interactivity)
-- [Vite](https://vitest.dev/) for optimized web hosting
-- [Tailwind](https://tailwindcss.com/) for building great looking UI
-- [Convex Auth](https://labs.convex.dev/auth) for authentication
+- 🚀 **Real-time Synchronization**: Powered by Convex, every change (task moves, agent updates, comments) propagates instantly to all connected clients.
+- 🤖 **Agent Oversight**: Monitor the status and activity of your agent roster (Jarvis, Friday, Shuri, etc.) in real-time.
+- 📦 **Mission Queue**: A kanban-style overview of tasks categorized by status: Inbox, Assigned, In Progress, Review, and Done.
+- 📡 **Live Activity Feed**: A streaming log of all operational events, comments, and status changes.
+- 🔐 **Secure Access**: Integrated Convex Auth for secure terminal login and management.
+- 📱 **Responsive Design**: Premium, centered layout that works seamlessly across all devices.
 
-## Get started
+## 🛠 Tech Stack
 
-If you just cloned this codebase and didn't use `npm create convex`, run:
+- **Backend**: [Convex](https://convex.dev/) (Real-time Database, Functions, Auth)
+- **Frontend**: [React](https://react.dev/) with [Vite](https://vitejs.dev/)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+- **Icons**: [Tabler Icons](https://tabler-icons.io/)
 
+## 🚀 Getting Started
+
+### 1. Initial Setup
+Run the following commands to install dependencies and start the development environment:
+
+```bash
+bun install
+bun dev
 ```
-npm install
-npm run dev
+
+### 2. Seeding Data
+To populate your local dashboard with the initial roster of agents and tasks, run the seed script:
+
+```bash
+npx convex run seed:run
 ```
 
-If you're reading this README on GitHub and want to use this template, run:
+### 3. Terminal Access
+1. Open the app in your browser (usually `http://localhost:5173`).
+2. Use the **Sign Up** flow to create your commander credentials.
+3. Access the dashboard to start monitoring operations.
 
-```
-npm create convex@latest -- -t react-vite-convexauth
-```
+## 📖 Learn More
 
-For more information on how to configure Convex Auth, check out the [Convex Auth docs](https://labs.convex.dev/auth/).
+- [Convex Documentation](https://docs.convex.dev/)
+- [React Documentation](https://react.dev/)
+- [Tailwind CSS Docs](https://tailwindcss.com/)
 
-For more examples of different Convex Auth flows, check out this [example repo](https://www.convex.dev/templates/convex-auth).
+---
 
-## Learn more
+*Mission Control // Secure Terminal Access // Ref: 2026*
 
-To learn more about developing your project with Convex, check out:
-
-- The [Tour of Convex](https://docs.convex.dev/get-started) for a thorough introduction to Convex principles.
-- The rest of [Convex docs](https://docs.convex.dev/) to learn about all Convex features.
-- [Stack](https://stack.convex.dev/) for in-depth articles on advanced topics.
-
-## Join the community
-
-Join thousands of developers building full-stack apps with Convex:
-
-- Join the [Convex Discord community](https://convex.dev/community) to get help in real-time.
-- Follow [Convex on GitHub](https://github.com/get-convex/), star and contribute to the open-source implementation of Convex.

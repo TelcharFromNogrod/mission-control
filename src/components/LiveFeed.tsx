@@ -1,36 +1,33 @@
 import React from 'react';
+import { useQuery } from "convex/react";
+import { api } from "../../convex/_generated/api";
 
 const filters = [
   { id: 'all', label: 'All', active: true },
-  { id: 'tasks', label: 'Tasks', count: 21 },
-  { id: 'comments', label: 'Comments', count: 172 },
+  { id: 'tasks', label: 'Tasks', count: 0 },
+  { id: 'comments', label: 'Comments', count: 0 },
   { id: 'decisions', label: 'Decisions', count: 0 },
   { id: 'docs', label: 'Docs', count: 0 },
-  { id: 'status', label: 'Status', count: 2 },
-];
-
-const agentFilters = [
-  { name: 'Jarvis', count: 17 },
-  { name: 'Shuri', count: 20 },
-  { name: 'Quill', count: 22 },
-  { name: 'Wong', count: 18 },
-  { name: 'Fury', count: 30 },
-  { name: 'Loki', count: 26 },
-  { name: 'Wanda', count: 9 },
-  { name: 'Vision', count: 22 },
-  { name: 'Manish', count: 5 },
-  { name: 'Pepper', count: 12 },
-  { name: 'Friday', count: 9 },
-];
-
-const feedItems = [
-  { id: '1', agent: 'Quill', action: 'commented on', target: '"Write Customer Case Studies (Brent + Will)"', time: 'about 2 hours ago' },
-  { id: '2', agent: 'Quill', action: 'commented on', target: '"Twitter Content Blitz - 10 Tweets This Week"', time: 'about 2 hours ago' },
-  { id: '3', agent: 'Friday', action: 'commented on', target: '"Design Expansion Revenue Mechanics (SaaS Cheat Code)"', time: 'about 2 hours ago' },
-  { id: '4', agent: 'Pepper', action: 'commented on', target: '"Design Expansion Revenue Mechanics (SaaS Cheat Code)"', time: 'about 2 hours ago' },
+  { id: 'status', label: 'Status', count: 0 },
 ];
 
 const LiveFeed: React.FC = () => {
+  const activities = useQuery(api.queries.listActivities);
+  const agents = useQuery(api.queries.listAgents);
+
+  if (activities === undefined || agents === undefined) {
+    return (
+      <aside className="[grid-area:right-sidebar] bg-white border-l border-border flex flex-col overflow-hidden animate-pulse">
+        <div className="px-6 py-5 border-b border-border h-[65px] bg-muted/20" />
+        <div className="flex-1 p-4 space-y-4">
+          {[...Array(6)].map((_, i) => (
+            <div key={i} className="h-16 bg-muted rounded-lg" />
+          ))}
+        </div>
+      </aside>
+    );
+  }
+
   return (
     <aside className="[grid-area:right-sidebar] bg-white border-l border-border flex flex-col overflow-hidden">
       <div className="px-6 py-5 border-b border-border">
@@ -45,7 +42,7 @@ const LiveFeed: React.FC = () => {
             {filters.map(f => (
               <div key={f.id} className={`text-[10px] font-semibold px-2.5 py-1 rounded-full border border-border cursor-pointer flex items-center gap-1 transition-colors ${f.active ? 'bg-[var(--accent-orange)] text-white border-[var(--accent-orange)]' : 'bg-muted text-muted-foreground'
                 }`}>
-                {f.label} {f.count !== undefined && <span className="opacity-70 text-[9px]">{f.count}</span>}
+                {f.label}
               </div>
             ))}
           </div>
@@ -54,21 +51,21 @@ const LiveFeed: React.FC = () => {
             <div className="text-[10px] font-semibold px-2.5 py-1 rounded-full border border-[var(--accent-orange)] text-[var(--accent-orange)] bg-white cursor-pointer">
               All Agents
             </div>
-            {agentFilters.map(a => (
-              <div key={a.name} className="text-[10px] font-semibold px-2.5 py-1 rounded-full border border-border bg-white text-muted-foreground cursor-pointer flex items-center gap-1">
-                {a.name} <span className="text-secondary-foreground/50 text-[9px]">{a.count}</span>
+            {agents.slice(0, 8).map(a => (
+              <div key={a._id} className="text-[10px] font-semibold px-2.5 py-1 rounded-full border border-border bg-white text-muted-foreground cursor-pointer flex items-center gap-1">
+                {a.name}
               </div>
             ))}
           </div>
         </div>
 
         <div className="flex flex-col gap-3">
-          {feedItems.map(item => (
-            <div key={item.id} className="flex gap-3 p-3 bg-secondary border border-border rounded-lg">
+          {activities.map(item => (
+            <div key={item._id} className="flex gap-3 p-3 bg-secondary border border-border rounded-lg">
               <div className="w-1.5 h-1.5 bg-[var(--accent-orange)] rounded-full mt-1.5 shrink-0" />
               <div className="text-xs leading-tight text-foreground">
-                <span className="font-bold text-[var(--accent-orange)]">{item.agent}</span> {item.action} <span className="font-semibold">{item.target}</span>
-                <div className="text-[10px] text-muted-foreground mt-1">{item.time}</div>
+                <span className="font-bold text-[var(--accent-orange)]">{item.agentName}</span> {item.message}
+                <div className="text-[10px] text-muted-foreground mt-1">just now</div>
               </div>
             </div>
           ))}
@@ -83,3 +80,4 @@ const LiveFeed: React.FC = () => {
 };
 
 export default LiveFeed;
+

@@ -1,41 +1,43 @@
 import React from 'react';
-
-interface Agent {
-  id: string;
-  name: string;
-  role: string;
-  level: 'LEAD' | 'INT' | 'SPC';
-  status: 'WORKING' | 'IDLE';
-  avatar: string;
-}
-
-const agents: Agent[] = [
-  { id: '1', name: 'Manish', role: 'Founder', level: 'LEAD', status: 'WORKING', avatar: '👨' },
-  { id: '2', name: 'Friday', role: 'Developer Agent', level: 'INT', status: 'WORKING', avatar: '⚙️' },
-  { id: '3', name: 'Fury', role: 'Customer Rese...', level: 'SPC', status: 'WORKING', avatar: '🔬' },
-  { id: '4', name: 'Jarvis', role: 'Squad Lead', level: 'LEAD', status: 'WORKING', avatar: '🤖' },
-  { id: '5', name: 'Loki', role: 'Content Writer', level: 'SPC', status: 'WORKING', avatar: '✍️' },
-  { id: '6', name: 'Pepper', role: 'Email Marketin...', level: 'INT', status: 'WORKING', avatar: '📧' },
-  { id: '7', name: 'Quill', role: 'Social Media', level: 'INT', status: 'WORKING', avatar: '📱' },
-  { id: '8', name: 'Shuri', role: 'Product Analyst', level: 'SPC', status: 'WORKING', avatar: '🔍' },
-  { id: '9', name: 'Vision', role: 'SEO Analyst', level: 'SPC', status: 'WORKING', avatar: '🌐' },
-  { id: '10', name: 'Wanda', role: 'Designer', level: 'SPC', status: 'WORKING', avatar: '🎨' },
-  { id: '11', name: 'Wong', role: 'Documentation', level: 'SPC', status: 'WORKING', avatar: '📄' },
-];
+import { useQuery } from "convex/react";
+import { api } from "../../convex/_generated/api";
 
 const AgentsSidebar: React.FC = () => {
+  const agents = useQuery(api.queries.listAgents);
+
+  if (agents === undefined) {
+    return (
+      <aside className="[grid-area:left-sidebar] bg-white border-r border-border flex flex-col overflow-hidden animate-pulse">
+        <div className="px-6 py-5 border-b border-border h-[65px] bg-muted/20" />
+        <div className="flex-1 space-y-4 p-6">
+          {[...Array(8)].map((_, i) => (
+            <div key={i} className="flex gap-3 items-center">
+              <div className="w-10 h-10 bg-muted rounded-full" />
+              <div className="flex-1 space-y-2">
+                <div className="h-3 bg-muted rounded w-24" />
+                <div className="h-2 bg-muted rounded w-16" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </aside>
+    );
+  }
+
   return (
     <aside className="[grid-area:left-sidebar] bg-white border-r border-border flex flex-col overflow-hidden">
       <div className="flex items-center justify-between px-6 py-5 border-b border-border">
         <div className="text-[11px] font-bold tracking-widest text-muted-foreground flex items-center gap-2">
           <span className="w-1.5 h-1.5 bg-[var(--accent-green)] rounded-full" /> AGENTS
         </div>
-        <div className="text-[11px] text-muted-foreground bg-muted px-2 py-0.5 rounded font-semibold">12</div>
+        <div className="text-[11px] text-muted-foreground bg-muted px-2 py-0.5 rounded font-semibold">
+          {agents.length}
+        </div>
       </div>
 
       <div className="flex-1 overflow-y-auto py-3">
         {agents.map((agent) => (
-          <div key={agent.id} className="flex items-center gap-3 px-6 py-3 cursor-pointer hover:bg-muted transition-colors group">
+          <div key={agent._id} className="flex items-center gap-3 px-6 py-3 cursor-pointer hover:bg-muted transition-colors group">
             <div className="w-10 h-10 bg-muted rounded-full flex items-center justify-center text-xl border border-border group-hover:bg-white transition-colors">
               {agent.avatar}
             </div>
@@ -50,8 +52,12 @@ const AgentsSidebar: React.FC = () => {
               </div>
               <div className="text-xs text-muted-foreground">{agent.role}</div>
             </div>
-            <div className="text-[9px] font-bold text-[var(--status-working)] flex items-center gap-1 tracking-wider uppercase">
-              <span className="w-1.5 h-1.5 bg-[var(--status-working)] rounded-full" />
+            <div className={`text-[9px] font-bold flex items-center gap-1 tracking-wider uppercase ${agent.status === 'active' ? 'text-[var(--status-working)]' :
+                agent.status === 'blocked' ? 'text-[var(--accent-red)]' : 'text-muted-foreground'
+              }`}>
+              <span className={`w-1.5 h-1.5 rounded-full ${agent.status === 'active' ? 'bg-[var(--status-working)]' :
+                  agent.status === 'blocked' ? 'bg-[var(--accent-red)]' : 'bg-muted-foreground'
+                }`} />
               {agent.status}
             </div>
           </div>
@@ -62,3 +68,4 @@ const AgentsSidebar: React.FC = () => {
 };
 
 export default AgentsSidebar;
+

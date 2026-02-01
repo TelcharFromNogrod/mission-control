@@ -2,12 +2,53 @@ import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 import { authTables } from "@convex-dev/auth/server";
 
-// The schema is normally optional, but Convex Auth
-// requires indexes defined on `authTables`.
-// The schema provides more precise TypeScript types.
 export default defineSchema({
   ...authTables,
-  numbers: defineTable({
-    value: v.number(),
+  agents: defineTable({
+    name: v.string(),
+    role: v.string(),
+    status: v.union(v.literal("idle"), v.literal("active"), v.literal("blocked")),
+    level: v.union(v.literal("LEAD"), v.literal("INT"), v.literal("SPC")),
+    avatar: v.string(),
+    currentTaskId: v.optional(v.id("tasks")),
+    sessionKey: v.optional(v.string()),
+  }),
+  tasks: defineTable({
+    title: v.string(),
+    description: v.string(),
+    status: v.union(
+      v.literal("inbox"),
+      v.literal("assigned"),
+      v.literal("in_progress"),
+      v.literal("review"),
+      v.literal("done")
+    ),
+    assigneeIds: v.array(v.id("agents")),
+    tags: v.array(v.string()),
+    borderColor: v.optional(v.string()),
+  }),
+  messages: defineTable({
+    taskId: v.id("tasks"),
+    fromAgentId: v.id("agents"),
+    content: v.string(),
+    attachments: v.array(v.id("documents")),
+  }),
+  activities: defineTable({
+    type: v.string(),
+    agentId: v.id("agents"),
+    message: v.string(),
+    targetId: v.optional(v.id("tasks")),
+  }),
+  documents: defineTable({
+    title: v.string(),
+    content: v.string(),
+    type: v.string(),
+    taskId: v.optional(v.id("tasks")),
+  }),
+  notifications: defineTable({
+    mentionedAgentId: v.id("agents"),
+    content: v.string(),
+    delivered: v.boolean(),
   }),
 });
+
