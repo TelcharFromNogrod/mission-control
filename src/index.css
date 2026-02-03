@@ -188,6 +188,62 @@
 	width: 100vw;
 }
 
+/* Mobile layout: collapse into header + main only.
+ * Sidebars become off-canvas drawers controlled by React state.
+ */
+@media (max-width: 768px) {
+	.app-container {
+		grid-template-areas:
+			"header"
+			"main";
+		grid-template-columns: 1fr;
+		grid-template-rows: var(--header-height) minmax(0, 1fr);
+		height: 100dvh;
+		overflow: hidden;
+	}
+
+	/* Prevent grid children from forcing horizontal overflow */
+	.app-container > * {
+		min-width: 0;
+	}
+
+	.drawer-backdrop {
+		position: fixed;
+		inset: 0;
+		background: rgba(0, 0, 0, 0.35);
+		backdrop-filter: blur(1px);
+		z-index: 40;
+	}
+
+	.sidebar-drawer {
+		position: fixed;
+		top: 0;
+		bottom: 0;
+		height: 100dvh;
+		z-index: 50;
+		max-width: 92vw;
+		box-shadow: var(--shadow-lg);
+		transition: transform 220ms ease;
+		will-change: transform;
+	}
+
+	.sidebar-drawer--left {
+		left: 0;
+		width: var(--sidebar-left-width);
+		transform: translateX(-100%);
+	}
+
+	.sidebar-drawer--right {
+		right: 0;
+		width: var(--sidebar-right-width);
+		transform: translateX(100%);
+	}
+
+	.sidebar-drawer.is-open {
+		transform: translateX(0);
+	}
+}
+
 /* Scrollbar Styling */
 ::-webkit-scrollbar {
 	width: 6px;

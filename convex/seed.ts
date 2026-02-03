@@ -1,5 +1,4 @@
 import { mutation } from "./_generated/server";
-import { v } from "convex/values";
 
 export const run = mutation({
 	args: {},
@@ -7,11 +6,11 @@ export const run = mutation({
 		// Clear existing data (optional, but good for idempotent seeding)
 		const existingAgents = await ctx.db.query("agents").collect();
 		for (const agent of existingAgents) {
-			await ctx.db.delete(agent._id);
+			await ctx.db.delete("agents", agent._id);
 		}
 		const existingTasks = await ctx.db.query("tasks").collect();
 		for (const task of existingTasks) {
-			await ctx.db.delete(task._id);
+			await ctx.db.delete("tasks", task._id);
 		}
 
 		// Insert Agents

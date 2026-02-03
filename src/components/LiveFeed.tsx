@@ -3,6 +3,11 @@ import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { Id } from "../../convex/_generated/dataModel";
 
+type LiveFeedProps = {
+	isOpen?: boolean;
+	onClose?: () => void;
+};
+
 const filters = [
 	{ id: "all", label: "All" },
 	{ id: "tasks", label: "Tasks", count: 0 },
@@ -12,7 +17,8 @@ const filters = [
 	{ id: "status", label: "Status", count: 0 },
 ];
 
-const LiveFeed: React.FC = () => {
+const LiveFeed: React.FC<LiveFeedProps> = ({ isOpen = false, onClose }) => {
+	const activities = useQuery(api.queries.listActivities);
 	const [selectedType, setSelectedType] = useState<string>("all");
 	const [selectedAgentId, setSelectedAgentId] = useState<Id<"agents"> | undefined>(undefined);
 
@@ -24,7 +30,10 @@ const LiveFeed: React.FC = () => {
 
 	if (activities === undefined || agents === undefined) {
 		return (
-			<aside className="[grid-area:right-sidebar] bg-white border-l border-border flex flex-col overflow-hidden animate-pulse">
+			<aside
+				className={`[grid-area:right-sidebar] sidebar-drawer sidebar-drawer--right bg-white border-l border-border flex flex-col overflow-hidden animate-pulse ${isOpen ? "is-open" : ""}`}
+				aria-label="Live feed"
+			>
 				<div className="px-6 py-5 border-b border-border h-[65px] bg-muted/20" />
 				<div className="flex-1 p-4 space-y-4">
 					{[...Array(6)].map((_, i) => (
@@ -36,12 +45,23 @@ const LiveFeed: React.FC = () => {
 	}
 
 	return (
-		<aside className="[grid-area:right-sidebar] bg-white border-l border-border flex flex-col overflow-hidden">
-			<div className="px-6 py-5 border-b border-border">
+		<aside
+			className={`[grid-area:right-sidebar] sidebar-drawer sidebar-drawer--right bg-white border-l border-border flex flex-col overflow-hidden ${isOpen ? "is-open" : ""}`}
+			aria-label="Live feed"
+		>
+			<div className="px-6 py-5 border-b border-border flex items-center justify-between">
 				<div className="text-[11px] font-bold tracking-widest text-muted-foreground flex items-center gap-2">
 					<span className="w-1.5 h-1.5 bg-[var(--accent-green)] rounded-full" />{" "}
 					LIVE FEED
 				</div>
+				<button
+					type="button"
+					className="md:hidden inline-flex h-8 w-8 items-center justify-center rounded-lg bg-muted hover:bg-accent transition-colors"
+					onClick={onClose}
+					aria-label="Close live feed sidebar"
+				>
+					<span aria-hidden="true">✕</span>
+				</button>
 			</div>
 
 			<div className="flex-1 flex flex-col overflow-y-auto p-4 gap-5">

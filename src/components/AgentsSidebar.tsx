@@ -2,12 +2,23 @@ import React from "react";
 import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 
-const AgentsSidebar: React.FC = () => {
+type AgentsSidebarProps = {
+	isOpen?: boolean;
+	onClose?: () => void;
+};
+
+const AgentsSidebar: React.FC<AgentsSidebarProps> = ({
+	isOpen = false,
+	onClose,
+}) => {
 	const agents = useQuery(api.queries.listAgents);
 
 	if (agents === undefined) {
 		return (
-			<aside className="[grid-area:left-sidebar] bg-white border-r border-border flex flex-col overflow-hidden animate-pulse">
+			<aside
+				className={`[grid-area:left-sidebar] sidebar-drawer sidebar-drawer--left bg-white border-r border-border flex flex-col overflow-hidden animate-pulse ${isOpen ? "is-open" : ""}`}
+				aria-label="Agents"
+			>
 				<div className="px-6 py-5 border-b border-border h-[65px] bg-muted/20" />
 				<div className="flex-1 space-y-4 p-6">
 					{[...Array(8)].map((_, i) => (
@@ -25,14 +36,27 @@ const AgentsSidebar: React.FC = () => {
 	}
 
 	return (
-		<aside className="[grid-area:left-sidebar] bg-white border-r border-border flex flex-col overflow-hidden">
+		<aside
+			className={`[grid-area:left-sidebar] sidebar-drawer sidebar-drawer--left bg-white border-r border-border flex flex-col overflow-hidden ${isOpen ? "is-open" : ""}`}
+			aria-label="Agents"
+		>
 			<div className="flex items-center justify-between px-6 py-5 border-b border-border">
 				<div className="text-[11px] font-bold tracking-widest text-muted-foreground flex items-center gap-2">
 					<span className="w-1.5 h-1.5 bg-[var(--accent-green)] rounded-full" />{" "}
 					AGENTS
 				</div>
-				<div className="text-[11px] text-muted-foreground bg-muted px-2 py-0.5 rounded font-semibold">
-					{agents.length}
+				<div className="flex items-center gap-2">
+					<button
+						type="button"
+						className="md:hidden inline-flex h-8 w-8 items-center justify-center rounded-lg bg-muted hover:bg-accent transition-colors"
+						onClick={onClose}
+						aria-label="Close agents sidebar"
+					>
+						<span aria-hidden="true">✕</span>
+					</button>
+					<div className="text-[11px] text-muted-foreground bg-muted px-2 py-0.5 rounded font-semibold">
+						{agents.length}
+					</div>
 				</div>
 			</div>
 

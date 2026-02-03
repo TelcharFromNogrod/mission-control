@@ -67,7 +67,7 @@ export const listActivities = query({
 		// Join with agents to get names for the feed
 		const enrichedFeed = await Promise.all(
 			activities.map(async (activity) => {
-				const agent = await ctx.db.get(activity.agentId);
+				const agent = await ctx.db.get("agents", activity.agentId);
 				return {
 					...activity,
 					agentName: agent?.name ?? "Unknown Agent",
