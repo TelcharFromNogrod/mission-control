@@ -25,7 +25,7 @@ interface Task {
 	assigneeIds: Id<"agents">[];
 	tags: string[];
 	borderColor?: string;
-	lastMessageTime?: number;
+	lastMessageTime?: number | null;
 }
 
 function formatRelativeTime(timestamp: number | null): string {
@@ -72,7 +72,7 @@ const MissionQueue: React.FC<MissionQueueProps> = ({ selectedTaskId, onSelectTas
 	const convex = useConvex();
 	const [activeTask, setActiveTask] = useState<Task | null>(null);
 
-	const currentUserAgent = agents?.find(a => a.name === "Manish");
+	const currentUserAgent = agents?.find(a => a.name === "J");
 
 	const sensors = useSensors(
 		useSensor(PointerSensor, {

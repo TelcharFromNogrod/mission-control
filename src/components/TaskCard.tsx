@@ -12,7 +12,7 @@ interface Task {
 	assigneeIds: Id<"agents">[];
 	tags: string[];
 	borderColor?: string;
-	lastMessageTime?: number;
+	lastMessageTime?: number | null;
 }
 
 interface TaskCardProps {

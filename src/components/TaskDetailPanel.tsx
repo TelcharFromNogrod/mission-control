@@ -45,7 +45,7 @@ const TaskDetailPanel: React.FC<TaskDetailPanelProps> = ({ taskId, onClose, onPr
   const linkRun = useMutation(api.tasks.linkRun);
 
   const task = tasks?.find((t) => t._id === taskId);
-  const currentUserAgent = agents?.find(a => a.name === "Manish");
+  const currentUserAgent = agents?.find(a => a.name === "J");
   
   const [description, setDescription] = useState("");
   const [isEditingDesc, setIsEditingDesc] = useState(false);
@@ -56,6 +56,7 @@ const TaskDetailPanel: React.FC<TaskDetailPanelProps> = ({ taskId, onClose, onPr
   const [newDocType, setNewDocType] = useState("note");
   const [newDocPath, setNewDocPath] = useState("");
   const [newDocContent, setNewDocContent] = useState("");
+  const [showAssigneeDropdown, setShowAssigneeDropdown] = useState(false);
 
   useEffect(() => {
     if (task) {
@@ -406,32 +407,38 @@ const TaskDetailPanel: React.FC<TaskDetailPanelProps> = ({ taskId, onClose, onPr
                 </div>
               );
             })}
-            <div className="relative group">
+            <div className="relative">
               <button
                 disabled={!currentUserAgent}
+                onClick={() => setShowAssigneeDropdown(!showAssigneeDropdown)}
                 className="flex items-center gap-1 px-2 py-1 bg-muted border border-transparent rounded-full text-[11px] text-muted-foreground hover:bg-white hover:border-border transition-all disabled:opacity-50"
               >
                 <span>+ Add</span>
               </button>
               
-              {/* Dropdown for adding agents - simplified for now */}
-              <div className="absolute top-full left-0 mt-1 w-48 bg-white border border-border shadow-lg rounded-lg hidden group-hover:block z-10 p-1">
-                 {agents?.filter(a => !task.assigneeIds?.includes(a._id)).map(agent => (
-                   <button 
-                    key={agent._id}
-                    onClick={() => handleAssigneeToggle(agent._id)}
-                    className="w-full text-left px-2 py-1.5 text-xs hover:bg-muted rounded flex items-center gap-2"
-                   >
-                     <div className="w-4 h-4 rounded-full bg-muted flex items-center justify-center overflow-hidden">
-                        {renderAvatar(agent.avatar)}
-                     </div>
-                     {agent.name}
-                   </button>
-                 ))}
-                 {agents?.filter(a => !task.assigneeIds?.includes(a._id)).length === 0 && (
-                   <div className="px-2 py-1.5 text-xs text-muted-foreground text-center">No available agents</div>
-                 )}
-              </div>
+              {/* Dropdown for adding agents - click to open */}
+              {showAssigneeDropdown && (
+                <div className="absolute top-full left-0 mt-1 w-48 bg-white border border-border shadow-lg rounded-lg z-10 p-1">
+                   {agents?.filter(a => !task.assigneeIds?.includes(a._id)).map(agent => (
+                     <button 
+                      key={agent._id}
+                      onClick={() => {
+                        handleAssigneeToggle(agent._id);
+                        setShowAssigneeDropdown(false);
+                      }}
+                      className="w-full text-left px-2 py-1.5 text-xs hover:bg-muted rounded flex items-center gap-2"
+                     >
+                       <div className="w-4 h-4 rounded-full bg-muted flex items-center justify-center overflow-hidden">
+                          {renderAvatar(agent.avatar)}
+                       </div>
+                       {agent.name}
+                     </button>
+                   ))}
+                   {agents?.filter(a => !task.assigneeIds?.includes(a._id)).length === 0 && (
+                     <div className="px-2 py-1.5 text-xs text-muted-foreground text-center">No available agents</div>
+                   )}
+                </div>
+              )}
             </div>
           </div>
         </div>

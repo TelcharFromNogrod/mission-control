@@ -11,25 +11,14 @@ export const listAgents = query({
 export const listTasks = query({
 	args: {},
 	handler: async (ctx) => {
-		const tasks = await ctx.db.query("tasks").collect();
-
-		// Enrich tasks with last message time
-		const enrichedTasks = await Promise.all(
-			tasks.map(async (task) => {
-				const lastMessage = await ctx.db
-					.query("messages")
-					.filter((q) => q.eq(q.field("taskId"), task._id))
-					.order("desc")
-					.first();
-
-				return {
-					...task,
-					lastMessageTime: lastMessage?._creationTime ?? null,
-				};
-			})
-		);
-
-		return enrichedTasks;
+		// Limit to 50 most recent tasks to stay within document read limits
+		// Skip message enrichment to avoid N+1 queries
+		const tasks = await ctx.db.query("tasks").order("desc").take(50);
+		
+		return tasks.map(task => ({
+			...task,
+			lastMessageTime: null, // Skip enrichment for now
+		}));
 	},
 });
 
@@ -80,7 +69,7 @@ export const listActivities = query({
 			});
 		}
 
-		const activities = await activitiesQuery.take(50);
+		const activities = await activitiesQuery.take(20);
 
 		// Join with agents to get names for the feed
 		const enrichedFeed = await Promise.all(
@@ -100,10 +89,12 @@ export const listActivities = query({
 export const listMessages = query({
 	args: { taskId: v.id("tasks") },
 	handler: async (ctx, args) => {
+		// Get the 50 most recent messages, then reverse to chronological order
 		const messages = await ctx.db
 			.query("messages")
 			.filter((q) => q.eq(q.field("taskId"), args.taskId))
-			.collect();
+			.order("desc")
+			.take(50);
 
         // Join with agents to get names/avatars
         const enrichedMessages = await Promise.all(
@@ -117,6 +108,7 @@ export const listMessages = query({
             })
         );
         
-        return enrichedMessages;
+        // Return in chronological order (oldest first)
+        return enrichedMessages.reverse();
 	},
 });
